@@ -5,19 +5,20 @@ import dotenv from 'dotenv';
 
 import contactRoutes from './routes/contact.js';
 import authRoutes from './routes/auth.js';
-import verifyToken from './middleware/verifyToken.js'; // ✅ renamed to match the file name you shared
 
 dotenv.config();
 
 const app = express();
+
+// Middleware
 app.use(cors());
 app.use(express.json());
 
-// Public route: login
-app.use('/api/login', authRoutes);
+// Routes
+app.use('/api/login', authRoutes);       // public
+app.use('/api/contact', contactRoutes);  // selectively protected inside contact.js
 
-app.use('/api/contact', contactRoutes);
-
+// Connect to MongoDB and start the server
 mongoose.connect(process.env.MONGO_URI)
   .then(() => {
     console.log('MongoDB connected');
