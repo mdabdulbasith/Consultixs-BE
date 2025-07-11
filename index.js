@@ -29,3 +29,16 @@ mongoose.connect(process.env.MONGO_URI)
   .catch((err) => {
     console.error('MongoDB connection failed:', err);
   });
+
+// Add this route in your Express backend
+app.get("/oauth/callback", (req, res) => {
+  const { code } = req.query;
+
+  if (code) {
+    console.log("✅ Zoho Authorization Code received:", code);
+    res.send("Authorization code received successfully. Check your backend logs.");
+  } else {
+    res.send("Authorization code not found.");
+  }
+});
+

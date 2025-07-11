@@ -18,7 +18,7 @@ router.post('/', async (req, res) => {
     }
 
     if (admin.password !== password) {
-      console.log('Password mismatch. Expected:', admin.password, 'Received:', password);
+      console.log('Password mismatch');
       return res.status(401).json({ error: 'Incorrect password' });
     }
 
