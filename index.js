@@ -6,6 +6,7 @@ import dotenv from 'dotenv';
 import contactRoutes from './routes/contact.js';
 import authRoutes from './routes/auth.js';
 import syncToZohoRoute from './routes/syncToZoho.js';
+import chatbotRoutes from './routes/chatbot.js';
 
 dotenv.config();
 
@@ -19,6 +20,7 @@ app.use(syncToZohoRoute);
 // Routes
 app.use('/api/login', authRoutes);       // public
 app.use('/api/contact', contactRoutes);  // selectively protected inside contact.js
+app.use('/api/chat', chatbotRoutes);
 
 // Connect to MongoDB and start the server
 mongoose.connect(process.env.MONGO_URI)
