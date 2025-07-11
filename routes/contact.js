@@ -9,7 +9,7 @@ dotenv.config();
 
 const router = express.Router();
 
-// 🔓 Public: Submit contact form and sync to Zoho
+// 🔓 Public: Submit contact form and sync to Zoho in background
 router.post('/', async (req, res) => {
   try {
     const { name, email, message, phone } = req.body;
@@ -18,15 +18,16 @@ router.post('/', async (req, res) => {
     const newContact = new Contact({ name, email, message, phone });
     await newContact.save();
 
-    // 2. Auto-refresh and get Zoho access token
-    const accessToken = await getAccessToken();
+    // ✅ Immediately respond to frontend
+    res.status(201).json({ message: 'Contact saved' });
 
-    // 3. Prepare Zoho payload
+    // 2. Background sync to Zoho
+    const accessToken = await getAccessToken();
     const payload = {
       data: [
         {
           Company: "Consultixs",
-          Last_Name: name || "Unknown", // Zoho requires Last_Name
+          Last_Name: name || "Unknown",
           Email: email,
           Phone: phone,
           Description: message || "",
@@ -35,24 +36,18 @@ router.post('/', async (req, res) => {
       ]
     };
 
-    // 4. Send to Zoho
-    const response = await axios.post(
-      'https://www.zohoapis.in/crm/v2/Leads',
-      payload,
-      {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-          'Content-Type': 'application/json',
-        },
-      }
-    );
-
-    console.log('✅ Synced to Zoho:', response.data);
-    res.status(201).json({ message: 'Contact saved and synced to Zoho' });
+    axios.post('https://www.zohoapis.in/crm/v2/Leads', payload, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        'Content-Type': 'application/json',
+      },
+    })
+      .then(response => console.log('✅ Synced to Zoho:', response.data))
+      .catch(error => console.error('❌ Zoho Sync Failed:', error.response?.data || error.message));
 
   } catch (err) {
-    console.error('❌ Error syncing contact:', err.response?.data || err.message);
-    res.status(500).json({ error: 'Failed to save or sync contact' });
+    console.error('❌ Error saving contact:', err);
+    res.status(500).json({ error: 'Failed to save contact' });
   }
 });
 
