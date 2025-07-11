@@ -1,13 +1,14 @@
-const express = require('express');
-const router = express.Router();
-const axios = require('axios');
-const Contact = require('../models/Contact'); // adjust this path if needed
+import express from 'express';
+import axios from 'axios';
+import Contact from '../models/Contact.js'; // adjust path if needed
 
-const ZOHO_ACCESS_TOKEN = 'your_access_token_here'; // paste your token or use dotenv
+const router = express.Router();
+
+const ZOHO_ACCESS_TOKEN = 'your_actual_access_token_here';
 
 router.get('/sync-to-zoho', async (req, res) => {
   try {
-    const contacts = await Contact.find(); // all contact form entries
+    const contacts = await Contact.find();
 
     for (const contact of contacts) {
       const payload = {
@@ -29,19 +30,19 @@ router.get('/sync-to-zoho', async (req, res) => {
         {
           headers: {
             Authorization: `Bearer ${ZOHO_ACCESS_TOKEN}`,
-            'Content-Type': 'application/json'
-          }
+            'Content-Type': 'application/json',
+          },
         }
       );
 
-      console.log(`✅ Sent lead: ${contact.email}`);
+      console.log(`✅ Synced: ${contact.email}`);
     }
 
-    res.json({ success: true, message: 'All contacts synced to Zoho CRM successfully' });
-  } catch (err) {
-    console.error('❌ Zoho sync failed:', err.response?.data || err.message);
-    res.status(500).json({ error: 'Failed to sync leads' });
+    res.json({ success: true, message: 'Contacts synced to Zoho CRM' });
+  } catch (error) {
+    console.error('❌ Error syncing:', error.response?.data || error.message);
+    res.status(500).json({ error: 'Sync failed' });
   }
 });
 
-module.exports = router;
+export default router;
