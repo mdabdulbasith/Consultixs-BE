@@ -5,6 +5,8 @@ import dotenv from 'dotenv';
 
 import contactRoutes from './routes/contact.js';
 import authRoutes from './routes/auth.js';
+const syncToZohoRoute = require('./routes/syncToZoho'); // adjust path
+app.use(syncToZohoRoute);
 
 dotenv.config();
 
