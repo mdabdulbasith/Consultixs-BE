@@ -14,7 +14,7 @@ router.post('/', async (req, res) => {
     const userMessage = req.body.message;
 
     const systemPrompt = `
-You are a helpful assistant for Consultixs, a company that offers AI consulting, web & mobile development, cloud solutions, digital marketing, and more. Answer questions clearly and helpfully based on this context. COnsultixs office is in India, Silicon valley and orange county.
+You are a helpful assistant for Consultixs, a company that offers AI consulting, web & mobile development, cloud solutions, digital marketing, and more. Answer questions clearly and helpfully based on this context. Consultixs office is in India, Silicon valley and orange county.
 `;
 
     try {

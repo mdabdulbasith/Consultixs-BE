@@ -12,8 +12,15 @@ dotenv.config();
 
 const app = express();
 
+// ✅ Proper CORS setup for Vercel frontend
+app.use(cors({
+  origin: ['http://localhost:5173', 'https://consultixs-ui.vercel.app'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+}));
+
+
 // Middleware
-app.use(cors());
 app.use(express.json());
 app.use(syncToZohoRoute);
 
@@ -22,7 +29,7 @@ app.use('/api/login', authRoutes);       // public
 app.use('/api/contact', contactRoutes);  // selectively protected inside contact.js
 app.use('/api/chat', chatbotRoutes);
 
-// Connect to MongoDB and start the server
+// MongoDB connection
 mongoose.connect(process.env.MONGO_URI)
   .then(() => {
     console.log('MongoDB connected');
@@ -34,7 +41,7 @@ mongoose.connect(process.env.MONGO_URI)
     console.error('MongoDB connection failed:', err);
   });
 
-// Add this route in your Express backend
+// OAuth Route
 app.get("/oauth/callback", (req, res) => {
   const { code } = req.query;
 
@@ -45,4 +52,3 @@ app.get("/oauth/callback", (req, res) => {
     res.send("Authorization code not found.");
   }
 });
-
